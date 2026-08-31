@@ -1,37 +1,89 @@
 @import "tailwindcss";
 
 :root {
-  --background: #F9FAFB;
+  --font-size: 16px;
+  --radius: 0.625rem;
+
+  /* Brand palette — PELD Iguaçu */
+  --background: #ffffff;
   --foreground: #0D4D4A;
 
-  /* Marca PELD Iguaçu */
-  --color-primary: #1A9E96;
-  --color-dark: #0D4D4A;
-  --color-accent: #E8943A;
-  --color-soft-teal: #E8F6F5;
-  --color-soft-orange: #FFF3E6;
-  --color-surface: #F9FAFB;
-  --color-neutral-border: #E5E7EB;
-  --color-neutral-text: #6B7280;
+  --card: #ffffff;
+  --card-foreground: #0D4D4A;
+  --popover: #ffffff;
+  --popover-foreground: #0D4D4A;
+
+  --primary: #1A9E96;            /* teal — CTAs, links, active nav */
+  --primary-foreground: #ffffff;
+
+  --secondary: #E8F6F5;          /* soft teal — subtle section/badge bg */
+  --secondary-foreground: #0D4D4A;
+
+  --accent: #E8943A;             /* orange — highlight CTA, hover accents */
+  --accent-foreground: #ffffff;
+
+  --muted: #F9FAFB;              /* neutral section background */
+  --muted-foreground: #6B7280;   /* body copy */
+
+  --destructive: #d4183d;
+  --destructive-foreground: #ffffff;
+
+  --border: #E5E7EB;
+  --input: transparent;
+  --input-background: #ffffff;
+  --ring: #1A9E96;
+
+  --font-weight-medium: 600;
+  --font-weight-normal: 400;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-primary: var(--color-primary);
-  --color-dark: var(--color-dark);
-  --color-accent: var(--color-accent);
-  --color-soft-teal: var(--color-soft-teal);
-  --color-soft-orange: var(--color-soft-orange);
-  --color-surface: var(--color-surface);
-  --color-neutral-border: var(--color-neutral-border);
-  --color-neutral-text: var(--color-neutral-text);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-ring: var(--ring);
+  --font-sans: var(--font-source-sans), sans-serif;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: "Source Sans Pro", Arial, Helvetica, sans-serif;
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1 { font-size: 3rem; font-weight: 700; line-height: 1.1; }
+  h2 { font-size: 1.875rem; font-weight: 700; line-height: 1.25; }
+  h3 { font-size: 1.25rem; font-weight: 700; line-height: 1.3; }
+  h4 { font-size: 1.125rem; font-weight: 700; line-height: 1.4; }
+  label, button { font-weight: var(--font-weight-medium); }
+}
+
+html { font-size: var(--font-size); }
+
+/* Signature card shape — used for the four "Eixos de Atuação" cards */
+.card-axis {
+  border-radius: 8px 8px 40px 8px;
 }

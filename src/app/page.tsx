@@ -1,176 +1,224 @@
+import Image from "next/image";
 import Link from "next/link";
-import { fetchStrapi, strapiMediaUrl, type StrapiMedia } from "@/lib/strapi";
+import { BarChart3, HeartPulse, Leaf, Users } from "lucide-react";
+import { Button } from "@/ui/button";
+import { Badge } from "@/ui/badge";
+import { Card, CardContent } from "@/ui/card";
+import { SectionTitle } from "@/patterns/section-title";
+import { AxisCard } from "@/patterns/axis-card";
+import { PARCEIROS } from "@/lib/partners";
 
-interface HomePageData {
-  slogan: string;
-  imagem_fundo?: StrapiMedia | null;
+const EIXOS = [
+  {
+    title: "Biodiversidade",
+    description:
+      "Monitoramento de fauna, flora e a dinâmica das comunidades biológicas ao longo do tempo.",
+    icon: Leaf,
+    color: "#1A9E96",
+  },
+  {
+    title: "Saúde Ambiental",
+    description:
+      "Avaliação da qualidade da água, do solo e do ar, e dos impactos das pressões antrópicas no ecossistema.",
+    icon: HeartPulse,
+    color: "#E8943A",
+  },
+  {
+    title: "Socioecológico",
+    description:
+      "Relações entre comunidades locais, visitantes e a conservação do Parque Nacional do Iguaçu.",
+    icon: Users,
+    color: "#0D4D4A",
+  },
+  {
+    title: "Análises Integrativas",
+    description:
+      "Modelagem e síntese de dados de longo prazo para orientar decisões de manejo e conservação.",
+    icon: BarChart3,
+    color: "#1A9E96",
+  },
+];
+
+const DESTAQUES = [
+  {
+    title: "Novo levantamento revela aumento na diversidade de aves no Parque",
+    excerpt:
+      "Dados coletados ao longo de três anos mostram recuperação de espécies sensíveis em áreas de restauração florestal.",
+    date: new Date("2026-08-10"),
+    image: "/images/destaque-1.jpg",
+    href: "/noticias",
+  },
+  {
+    title: "PELD Iguaçu participa de encontro nacional de pesquisa ecológica",
+    excerpt:
+      "Equipe apresentou resultados preliminares do eixo Socioecológico em Brasília.",
+    date: new Date("2026-07-22"),
+    image: "/images/destaque-2.jpg",
+    href: "/noticias",
+  },
+  {
+    title: "Publicação avalia qualidade da água em afluentes do Iguaçu",
+    excerpt:
+      "Novo artigo do eixo Saúde Ambiental está disponível na seção de publicações.",
+    date: new Date("2026-07-05"),
+    image: "/images/destaque-3.jpg",
+    href: "/publicacoes",
+  },
+];
+
+function formatDate(date: Date) {
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  }).format(date);
 }
 
-interface Eixo {
-  id: number;
-  nome: string;
-  descricao_curta: string;
-  cor?: string;
-  icone?: StrapiMedia | null;
-}
-
-interface Noticia {
-  id: number;
-  titulo: string;
-  resumo?: string;
-  imagem?: StrapiMedia | null;
-  data: string;
-}
-
-async function getHomeData() {
-  const [home, eixos, destaques] = await Promise.all([
-    fetchStrapi<HomePageData>("/home-page", { populate: "imagem_fundo" }),
-    fetchStrapi<Eixo[]>("/eixos", { populate: "icone", sort: "ordem:asc" }),
-    fetchStrapi<Noticia[]>("/noticias", {
-      "filters[destaque][$eq]": "true",
-      populate: "imagem",
-      sort: "data:desc",
-    }),
-  ]);
-
-  return { home, eixos: eixos ?? [], destaques: destaques ?? [] };
-}
-
-export default async function HomePage() {
-  const { home, eixos, destaques } = await getHomeData();
-  const heroImage = strapiMediaUrl(home?.imagem_fundo);
-  const slogan =
-    home?.slogan ?? "Ciência, conservação e educação no Parque Nacional do Iguaçu.";
+export default function HomePage() {
+  const [destaque, ...outros] = DESTAQUES;
 
   return (
     <div>
       {/* Hero */}
-      <section className="relative h-[500px] flex items-center justify-center text-center overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          {heroImage ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={heroImage}
-              alt="Parque Nacional do Iguaçu"
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <div className="w-full h-full bg-dark" />
-          )}
-          <div className="absolute inset-0 bg-black/50" />
-        </div>
-        <div className="relative z-10 max-w-4xl px-4 text-white">
-          <p className="mb-4 text-xs font-bold uppercase tracking-wider">
-            Programa de Pesquisas Ecológicas de Longa Duração
-          </p>
-          <h1 className="text-5xl md:text-7xl font-bold mb-4 tracking-tight">
-            PELD Iguaçu
-          </h1>
-          <p className="text-xl md:text-2xl mb-8 font-light max-w-2xl mx-auto">
-            {slogan}
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/sobre"
-              className="bg-accent hover:opacity-90 px-8 py-3 rounded-md font-bold transition-all text-white"
-            >
-              Conheça o Projeto
-            </Link>
-            <Link
-              href="/publicacoes"
-              className="border-2 border-white hover:bg-white hover:text-dark px-8 py-3 rounded-md font-bold transition-all"
-            >
-              Publicações
-            </Link>
+      <section className="relative">
+        <div className="relative flex min-h-140 md:min-h-160 items-center justify-center overflow-hidden px-4 text-center">
+          <Image
+            src="/images/hero-cataratas.jpg"
+            alt="Cataratas do Iguaçu"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-linear-to-t from-foreground/95 via-foreground/65 to-foreground/40" />
+
+          <div className="relative z-10 flex max-w-3xl flex-col items-center gap-6 py-24">
+            <Badge variant="secondary">
+              Programa de Pesquisa Ecológica de Longa Duração
+            </Badge>
+            <h1 className="text-5xl md:text-7xl text-background">
+              PELD Iguaçu
+            </h1>
+            <p className="max-w-xl text-lg md:text-xl font-light text-background/90">
+              Ciência, conservação e educação no Parque Nacional do Iguaçu.
+            </p>
+            <div className="mt-2 flex flex-col gap-4 sm:flex-row">
+              <Button asChild variant="accent" size="lg">
+                <Link href="/sobre">Conheça o Projeto</Link>
+              </Button>
+              <Button asChild variant="outline" size="lg">
+                <Link href="/publicacoes">Publicações</Link>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Eixos de Atuação */}
-      <section className="py-20 px-4 max-w-7xl mx-auto">
-        <div className="mb-12 text-center">
-          <h2 className="text-3xl font-bold text-dark mb-2">Eixos de Atuação</h2>
-          <p className="text-neutral-text max-w-2xl mx-auto">
-            O PELD Iguaçu organiza suas pesquisas em quatro frentes integradas para
-            compreender a dinâmica do ecossistema.
-          </p>
+      <section className="mx-auto max-w-7xl px-4 py-20">
+        <SectionTitle
+          title="Eixos de Atuação"
+          subtitle="O PELD Iguaçu organiza suas pesquisas em quatro frentes integradas para compreender a dinâmica do Parque Nacional do Iguaçu."
+          centered
+        />
+        <div className="grid grid-cols-1 gap-x-6 gap-y-14 pt-2 sm:grid-cols-2 lg:grid-cols-4">
+          {EIXOS.map((eixo) => (
+            <AxisCard
+              key={eixo.title}
+              icon={eixo.icon}
+              title={eixo.title}
+              description={eixo.description}
+              color={eixo.color}
+            />
+          ))}
         </div>
-
-        {eixos.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
-            {eixos.map((eixo) => {
-              const iconUrl = strapiMediaUrl(eixo.icone);
-              return (
-                <div
-                  key={eixo.id}
-                  className="group relative bg-white p-8 pt-12 rounded-tr-[40px] rounded-bl-[40px] rounded-tl-lg rounded-br-lg shadow-sm hover:shadow-xl transition-all duration-300"
-                >
-                  <div
-                    className="absolute -top-6 left-8 w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg"
-                    style={{ backgroundColor: eixo.cor || "#1A9E96" }}
-                  >
-                    {iconUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={iconUrl} alt="" className="w-7 h-7 object-contain" />
-                    ) : (
-                      <span className="text-white font-bold text-lg">
-                        {eixo.nome.charAt(0)}
-                      </span>
-                    )}
-                  </div>
-                  <h3 className="text-xl font-bold text-dark mb-3 mt-2">{eixo.nome}</h3>
-                  <p className="text-neutral-text text-sm leading-relaxed">
-                    {eixo.descricao_curta}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <p className="text-center text-neutral-text text-sm">
-            Cadastre os eixos no Strapi (Content Manager → Eixo) para exibi-los aqui.
-          </p>
-        )}
       </section>
 
-      {/* Destaques */}
-      {destaques.length > 0 && (
-        <section className="py-20 bg-surface px-4">
-          <div className="max-w-7xl mx-auto">
-            <h2 className="text-3xl font-bold text-dark mb-12">Destaques Recentes</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {destaques.slice(0, 3).map((noticia) => {
-                const img = strapiMediaUrl(noticia.imagem);
-                return (
-                  <div
-                    key={noticia.id}
-                    className="bg-white rounded-lg shadow-sm overflow-hidden"
-                  >
-                    {img && (
-                      <div className="aspect-video overflow-hidden">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={img}
-                          alt={noticia.titulo}
-                          className="w-full h-full object-cover"
+      {/* Destaques Recentes */}
+      <section className="bg-muted px-4 py-20">
+        <div className="mx-auto max-w-7xl">
+          <SectionTitle
+            title="Destaques Recentes"
+            subtitle="Últimas notícias e publicações do PELD Iguaçu."
+          />
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+            <Link href={destaque.href} className="group block">
+              <Card className="h-full gap-0 overflow-hidden py-0">
+                <div className="relative aspect-video overflow-hidden">
+                  <Image
+                    src={destaque.image}
+                    alt={destaque.title}
+                    fill
+                    sizes="(min-width: 1024px) 50vw, 100vw"
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                </div>
+                <CardContent className="p-6">
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-primary">
+                    {formatDate(destaque.date)}
+                  </p>
+                  <h3 className="mb-2 text-foreground transition-colors group-hover:text-primary">
+                    {destaque.title}
+                  </h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    {destaque.excerpt}
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            <div className="flex flex-col gap-6">
+              {outros.map((post) => (
+                <Link key={post.title} href={post.href} className="group block">
+                  <Card className="gap-0 overflow-hidden py-0">
+                    <div className="flex flex-row">
+                      <div className="relative aspect-square w-32 shrink-0 overflow-hidden sm:w-40">
+                        <Image
+                          src={post.image}
+                          alt={post.title}
+                          fill
+                          sizes="160px"
+                          className="object-cover transition-transform duration-300 group-hover:scale-105"
                         />
                       </div>
-                    )}
-                    <div className="p-6">
-                      <h3 className="text-lg font-bold text-dark mb-2">
-                        {noticia.titulo}
-                      </h3>
-                      {noticia.resumo && (
-                        <p className="text-sm text-neutral-text">{noticia.resumo}</p>
-                      )}
+                      <CardContent className="flex-1 p-4 sm:p-5">
+                        <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-primary">
+                          {formatDate(post.date)}
+                        </p>
+                        <h4 className="mb-1 text-foreground transition-colors group-hover:text-primary">
+                          {post.title}
+                        </h4>
+                        <p className="line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+                          {post.excerpt}
+                        </p>
+                      </CardContent>
                     </div>
-                  </div>
-                );
-              })}
+                  </Card>
+                </Link>
+              ))}
             </div>
           </div>
-        </section>
-      )}
+        </div>
+      </section>
+
+      {/* Parceiros */}
+      <section className="border-t border-border px-4 py-16">
+        <div className="mx-auto max-w-7xl">
+          <p className="mb-8 text-center text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Parceiros e Apoio Institucional
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
+            {PARCEIROS.map((nome) => (
+              <span
+                key={nome}
+                className="grayscale text-lg font-bold tracking-wide text-muted-foreground opacity-70 transition-opacity hover:opacity-100 md:text-xl"
+              >
+                {nome}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
