@@ -29,7 +29,7 @@ export default async function InstituicoesPage() {
 
       <section className="max-w-7xl mx-auto px-4">
         {instituicoes.length === 0 ? (
-          <p className="text-center text-neutral-text text-sm">
+          <p className="text-center text-muted-foreground text-sm">
             Cadastre instituições no Strapi (Content Manager → Instituição) para exibi-las aqui.
           </p>
         ) : (
@@ -37,7 +37,7 @@ export default async function InstituicoesPage() {
             {instituicoes.map((inst) => {
               const logoUrl = strapiMediaUrl(inst.logo);
               const content = (
-                <div className="flex flex-col items-center text-center p-8 bg-white rounded-lg border border-neutral-border h-full">
+                <div className="flex flex-col items-center text-center p-8 bg-card rounded-lg border border-border h-full">
                   {logoUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -46,13 +46,13 @@ export default async function InstituicoesPage() {
                       className="h-16 w-auto object-contain mb-4"
                     />
                   ) : (
-                    <div className="h-16 flex items-center justify-center font-bold text-dark mb-4">
+                    <div className="h-16 flex items-center justify-center font-bold text-foreground mb-4">
                       {inst.nome}
                     </div>
                   )}
-                  <h3 className="font-bold text-dark mb-1">{inst.nome}</h3>
+                  <h3 className="font-bold text-foreground mb-1">{inst.nome}</h3>
                   {inst.descricao && (
-                    <p className="text-sm text-neutral-text">{inst.descricao}</p>
+                    <p className="text-sm text-muted-foreground">{inst.descricao}</p>
                   )}
                 </div>
               );

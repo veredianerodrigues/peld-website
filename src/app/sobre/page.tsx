@@ -48,8 +48,8 @@ function TextBlock({ title, text }: { title: string; text?: string }) {
   if (paragraphs.length === 0) return null;
   return (
     <div className="mb-16">
-      <h2 className="text-2xl font-bold text-dark mb-4">{title}</h2>
-      <div className="space-y-4 text-neutral-text leading-relaxed max-w-3xl">
+      <h2 className="text-2xl font-bold text-foreground mb-4">{title}</h2>
+      <div className="space-y-4 text-muted-foreground leading-relaxed max-w-3xl">
         {paragraphs.map((p, i) => (
           <p key={i}>{p}</p>
         ))}
@@ -61,7 +61,7 @@ function TextBlock({ title, text }: { title: string; text?: string }) {
 function MembroCard({ membro }: { membro: Membro }) {
   const fotoUrl = strapiMediaUrl(membro.foto);
   return (
-    <div className="flex items-center gap-4 p-6 bg-white rounded-lg shadow-sm border border-neutral-border">
+    <div className="flex items-center gap-4 p-6 bg-card rounded-lg shadow-sm border border-border">
       <div className="w-16 h-16 rounded-full overflow-hidden shrink-0 bg-soft-teal flex items-center justify-center">
         {fotoUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -71,13 +71,13 @@ function MembroCard({ membro }: { membro: Membro }) {
         )}
       </div>
       <div>
-        <h4 className="font-bold text-dark">{membro.nome}</h4>
+        <h4 className="font-bold text-foreground">{membro.nome}</h4>
         {membro.instituicao_vinculo && (
           <p className="text-xs text-primary font-semibold mb-1 uppercase">
             {membro.instituicao_vinculo}
           </p>
         )}
-        {membro.cargo && <p className="text-xs text-neutral-text">{membro.cargo}</p>}
+        {membro.cargo && <p className="text-xs text-muted-foreground">{membro.cargo}</p>}
       </div>
     </div>
   );
@@ -118,7 +118,7 @@ export default async function SobrePage() {
               .map((s) => (
                 <div key={s.label} className="text-center p-6 bg-soft-teal rounded-lg">
                   <div className="text-3xl font-bold text-primary">{s.value}</div>
-                  <div className="text-sm text-neutral-text">{s.label}</div>
+                  <div className="text-sm text-muted-foreground">{s.label}</div>
                 </div>
               ))}
           </div>
@@ -126,7 +126,7 @@ export default async function SobrePage() {
 
         {elementos.length > 0 && (
           <div className="mb-16">
-            <h2 className="text-2xl font-bold text-dark mb-8 text-center">
+            <h2 className="text-2xl font-bold text-foreground mb-8 text-center">
               Elementos da Marca
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -135,7 +135,7 @@ export default async function SobrePage() {
                 return (
                   <div
                     key={el.id}
-                    className="text-center p-8 border border-neutral-border rounded-lg"
+                    className="text-center p-8 border border-border rounded-lg"
                   >
                     <div className="mx-auto w-16 h-16 bg-soft-teal text-primary rounded-full flex items-center justify-center mb-6">
                       {iconUrl ? (
@@ -145,9 +145,9 @@ export default async function SobrePage() {
                         <span className="font-bold text-lg">{el.titulo.charAt(0)}</span>
                       )}
                     </div>
-                    <h4 className="font-bold text-dark mb-2">{el.titulo}</h4>
+                    <h4 className="font-bold text-foreground mb-2">{el.titulo}</h4>
                     {el.descricao && (
-                      <p className="text-sm text-neutral-text">{el.descricao}</p>
+                      <p className="text-sm text-muted-foreground">{el.descricao}</p>
                     )}
                   </div>
                 );
@@ -157,10 +157,10 @@ export default async function SobrePage() {
         )}
 
         <div>
-          <h2 className="text-2xl font-bold text-dark mb-8 text-center">Equipe</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-8 text-center">Equipe</h2>
 
           {membros.length === 0 ? (
-            <p className="text-center text-neutral-text text-sm">
+            <p className="text-center text-muted-foreground text-sm">
               Cadastre a equipe no Strapi (Content Manager → Membro) para exibi-la aqui.
             </p>
           ) : (

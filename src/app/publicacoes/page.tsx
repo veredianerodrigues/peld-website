@@ -27,7 +27,7 @@ export default async function PublicacoesPage() {
 
       <section className="max-w-7xl mx-auto px-4">
         {publicacoes.length === 0 ? (
-          <p className="text-center text-neutral-text text-sm">
+          <p className="text-center text-muted-foreground text-sm">
             Cadastre publicações no Strapi (Content Manager → Publicação) para exibi-las aqui.
           </p>
         ) : (
@@ -37,15 +37,15 @@ export default async function PublicacoesPage() {
               return (
                 <div
                   key={pub.id}
-                  className="flex flex-col sm:flex-row sm:items-center justify-between p-6 bg-white rounded-lg border border-neutral-border gap-4"
+                  className="flex flex-col sm:flex-row sm:items-center justify-between p-6 bg-card rounded-lg border border-border gap-4"
                 >
                   <div>
-                    <h3 className="font-bold text-dark">{pub.titulo}</h3>
-                    <p className="text-sm text-neutral-text">
+                    <h3 className="font-bold text-foreground">{pub.titulo}</h3>
+                    <p className="text-sm text-muted-foreground">
                       {[pub.autores, pub.ano].filter(Boolean).join(" — ")}
                     </p>
                     {pub.resumo && (
-                      <p className="text-sm text-neutral-text mt-2">{pub.resumo}</p>
+                      <p className="text-sm text-muted-foreground mt-2">{pub.resumo}</p>
                     )}
                   </div>
                   {fileUrl && (
@@ -53,7 +53,7 @@ export default async function PublicacoesPage() {
                       href={fileUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-4 py-2 border border-neutral-border rounded hover:bg-surface text-sm font-semibold shrink-0"
+                      className="inline-flex items-center gap-2 px-4 py-2 border border-border rounded hover:bg-surface text-sm font-semibold shrink-0"
                     >
                       Baixar PDF
                     </a>

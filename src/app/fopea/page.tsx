@@ -28,7 +28,7 @@ export default async function FopeaPage() {
       />
 
       <section className="max-w-7xl mx-auto px-4">
-        <div className="space-y-4 text-neutral-text leading-relaxed max-w-3xl mb-12">
+        <div className="space-y-4 text-muted-foreground leading-relaxed max-w-3xl mb-12">
           {paragrafos.length > 0 ? (
             paragrafos.map((p, i) => <p key={i}>{p}</p>)
           ) : (
@@ -43,7 +43,7 @@ export default async function FopeaPage() {
             href={fopea.link_youtube}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block bg-accent hover:opacity-90 text-white px-6 py-3 rounded-md font-bold mb-12"
+            className="inline-block bg-accent hover:opacity-90 text-accent-foreground px-6 py-3 rounded-md font-bold mb-12"
           >
             Assistir no YouTube
           </a>

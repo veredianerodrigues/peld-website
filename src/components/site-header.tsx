@@ -18,7 +18,7 @@ export function SiteHeader() {
             src={logo}
             alt="PELD Iguaçu"
             className="h-12 md:h-14 w-auto"
-            priority
+            preload
           />
         </Link>
 

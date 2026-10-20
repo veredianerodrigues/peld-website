@@ -39,7 +39,7 @@ export default async function NoticiasPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           <div className="lg:col-span-2">
             {noticias.length === 0 ? (
-              <p className="text-neutral-text text-sm">
+              <p className="text-muted-foreground text-sm">
                 Cadastre notícias no Strapi (Content Manager → Notícia) para exibi-las aqui.
               </p>
             ) : (
@@ -61,11 +61,11 @@ export default async function NoticiasPage() {
                       <div className="text-xs text-primary font-bold mb-2 uppercase">
                         {formatDate(n.data)}
                       </div>
-                      <h3 className="text-lg font-bold text-dark mb-2 leading-tight">
+                      <h3 className="text-lg font-bold text-foreground mb-2 leading-tight">
                         {n.titulo}
                       </h3>
                       {n.resumo && (
-                        <p className="text-sm text-neutral-text line-clamp-2">{n.resumo}</p>
+                        <p className="text-sm text-muted-foreground line-clamp-2">{n.resumo}</p>
                       )}
                     </div>
                   );
@@ -75,9 +75,9 @@ export default async function NoticiasPage() {
           </div>
 
           <aside>
-            <h3 className="text-xl font-bold text-dark mb-6">Agenda de Eventos</h3>
+            <h3 className="text-xl font-bold text-foreground mb-6">Agenda de Eventos</h3>
             {eventos.length === 0 ? (
-              <p className="text-neutral-text text-sm">
+              <p className="text-muted-foreground text-sm">
                 Cadastre eventos no Strapi (Content Manager → Evento) para exibi-los aqui.
               </p>
             ) : (
@@ -93,11 +93,11 @@ export default async function NoticiasPage() {
                       </span>
                     </div>
                     <div>
-                      <h5 className="font-semibold text-sm text-dark leading-tight">
+                      <h5 className="font-semibold text-sm text-foreground leading-tight">
                         {ev.titulo}
                       </h5>
                       {ev.local && (
-                        <p className="text-xs text-neutral-text mt-1">{ev.local}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{ev.local}</p>
                       )}
                     </div>
                   </div>
