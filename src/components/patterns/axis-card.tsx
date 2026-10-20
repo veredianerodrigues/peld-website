@@ -4,14 +4,17 @@ import { type LucideIcon } from "lucide-react";
  * Signature PELD Iguaçu card: soft rectangle with one sharp "flag" corner
  * (bottom-right, 40px radius) and a floating icon badge. Used for the four
  * research axes on the homepage — reuse for any 4-up feature grid.
+ * `iconUrl` (imagem enviada pelo CMS) tem prioridade sobre o ícone Lucide.
  */
 export function AxisCard({
   icon: Icon,
+  iconUrl,
   title,
   description,
   color = "var(--primary)",
 }: {
   icon: LucideIcon;
+  iconUrl?: string;
   title: string;
   description: string;
   color?: string;
@@ -22,7 +25,12 @@ export function AxisCard({
         className="absolute -top-6 left-8 w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6"
         style={{ backgroundColor: color }}
       >
-        <Icon size={28} className="text-primary-foreground" />
+        {iconUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={iconUrl} alt="" className="w-8 h-8 object-contain" />
+        ) : (
+          <Icon size={28} className="text-primary-foreground" />
+        )}
       </div>
       <h3 className="text-foreground mb-3 mt-2">{title}</h3>
       <p className="text-muted-foreground text-sm leading-relaxed">{description}</p>

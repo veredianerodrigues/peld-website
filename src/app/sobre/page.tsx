@@ -161,7 +161,7 @@ export default async function SobrePage() {
 
           {membros.length === 0 ? (
             <p className="text-center text-muted-foreground text-sm">
-              Cadastre a equipe no Strapi (Content Manager → Membro) para exibi-la aqui.
+              Em breve.
             </p>
           ) : (
             <>

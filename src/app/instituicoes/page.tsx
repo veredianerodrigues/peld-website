@@ -1,21 +1,6 @@
-import { fetchStrapi, strapiMediaUrl, type StrapiMedia } from "@/lib/strapi";
+import { strapiMediaUrl } from "@/lib/strapi";
+import { getInstituicoes } from "@/lib/partners";
 import { PageHeader } from "@/components/PageHeader";
-
-interface Instituicao {
-  id: number;
-  nome: string;
-  logo?: StrapiMedia | null;
-  link?: string;
-  descricao?: string;
-}
-
-async function getInstituicoes() {
-  const data = await fetchStrapi<Instituicao[]>("/instituicoes", {
-    populate: "logo",
-    sort: "ordem:asc",
-  });
-  return data ?? [];
-}
 
 export default async function InstituicoesPage() {
   const instituicoes = await getInstituicoes();
@@ -30,7 +15,7 @@ export default async function InstituicoesPage() {
       <section className="max-w-7xl mx-auto px-4">
         {instituicoes.length === 0 ? (
           <p className="text-center text-muted-foreground text-sm">
-            Cadastre instituições no Strapi (Content Manager → Instituição) para exibi-las aqui.
+            Em breve.
           </p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

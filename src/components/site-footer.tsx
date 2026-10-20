@@ -2,10 +2,13 @@ import Image from "next/image";
 import Link from "next/link";
 import logo from "../../public/peld-logo.png";
 import { NAV_ITEMS } from "@/lib/nav";
-import { PARCEIROS } from "@/lib/partners";
+import { getConfiguracaoGlobal, getInstituicoes, TEXTO_FOOTER_PADRAO } from "@/lib/partners";
+import { strapiMediaUrl } from "@/lib/strapi";
 
-export function SiteFooter() {
+export async function SiteFooter() {
   const year = new Date().getFullYear();
+  const [config, instituicoes] = await Promise.all([getConfiguracaoGlobal(), getInstituicoes()]);
+  const textoFooter = config?.texto_footer || TEXTO_FOOTER_PADRAO;
 
   return (
     <footer className="bg-foreground text-background">
@@ -16,16 +19,13 @@ export function SiteFooter() {
             alt="PELD Iguaçu"
             className="h-10 w-auto brightness-0 invert opacity-90 mb-4"
           />
-          <p className="text-sm text-background/70 leading-relaxed">
-            Programa de Pesquisa Ecológica de Longa Duração no Parque Nacional
-            do Iguaçu.
-          </p>
+          <p className="text-sm text-background/70 leading-relaxed">{textoFooter}</p>
         </div>
 
         <div>
           <h4 className="text-background mb-4">Links Rápidos</h4>
           <ul className="flex flex-col gap-2">
-            {NAV_ITEMS.filter((item) => item.href !== "/").map((item) => (
+            {NAV_ITEMS.map((item) => (
               <li key={item.href}>
                 <Link
                   href={item.href}
@@ -38,29 +38,51 @@ export function SiteFooter() {
           </ul>
         </div>
 
-        <div>
-          <h4 className="text-background mb-4">Contato</h4>
-          <ul className="flex flex-col gap-2 text-sm text-background/70">
-            <li>Parque Nacional do Iguaçu, Foz do Iguaçu – PR</li>
-            <li>contato@peldiguacu.org</li>
-            <li>+55 (45) 3000-0000</li>
-          </ul>
-        </div>
+        {(config?.footer_localidade || config?.footer_email) && (
+          <div>
+            <h4 className="text-background mb-4">Contato</h4>
+            <ul className="flex flex-col gap-2 text-sm text-background/70">
+              {config.footer_localidade && <li>{config.footer_localidade}</li>}
+              {config.footer_email && (
+                <li>
+                  <a href={`mailto:${config.footer_email}`} className="hover:text-background">
+                    {config.footer_email}
+                  </a>
+                </li>
+              )}
+            </ul>
+          </div>
+        )}
 
-        <div>
-          <h4 className="text-background mb-4">Apoio Institucional</h4>
-          <ul className="flex flex-col gap-2 text-sm text-background/70">
-            {PARCEIROS.map((nome) => (
-              <li key={nome}>{nome}</li>
-            ))}
-          </ul>
-        </div>
+        {instituicoes.length > 0 && (
+          <div>
+            <h4 className="text-background mb-4">Apoio</h4>
+            <ul className="grid grid-cols-3 gap-3">
+              {instituicoes.map((inst) => {
+                const logoUrl = strapiMediaUrl(inst.logo);
+                return (
+                  <li
+                    key={inst.id}
+                    className="flex h-14 items-center justify-center rounded-md bg-background p-2"
+                  >
+                    {logoUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={logoUrl} alt={inst.nome} className="max-h-full w-auto object-contain" />
+                    ) : (
+                      <span className="text-center text-xs font-bold text-foreground">{inst.nome}</span>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
       </div>
 
       <div className="border-t border-background/15">
         <div className="max-w-7xl mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-background/60">
           <span>© {year} PELD Iguaçu. Todos os direitos reservados.</span>
-          <span>Programa de Pesquisa Ecológica de Longa Duração</span>
+          <span>{textoFooter}</span>
         </div>
       </div>
     </footer>

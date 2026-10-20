@@ -1,83 +1,68 @@
 import Image from "next/image";
 import Link from "next/link";
-import { BarChart3, HeartPulse, Leaf, Users } from "lucide-react";
+import { HeartPulse, Leaf, MessagesSquare, Users, type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { SectionTitle } from "@/components/patterns/section-title";
 import { AxisCard } from "@/components/patterns/axis-card";
 import { formatDate } from "@/lib/format";
-import { PARCEIROS } from "@/lib/partners";
+import { getInstituicoes } from "@/lib/partners";
+import { fetchStrapi, strapiMediaUrl, type StrapiMedia } from "@/lib/strapi";
 
-// Cada eixo usa um token de cor do globals.css — nada de hex solto.
-const EIXOS = [
-  {
-    title: "Biodiversidade",
-    description:
-      "Monitoramento de fauna, flora e da dinâmica das comunidades biológicas ao longo do tempo.",
-    icon: Leaf,
-    color: "var(--primary)",
-  },
-  {
-    title: "Saúde Ambiental",
-    description:
-      "Qualidade da água, do solo e do ar, e os impactos das pressões humanas sobre o ecossistema.",
-    icon: HeartPulse,
-    color: "var(--accent)",
-  },
-  {
-    title: "Socioecológico",
-    description:
-      "Relações entre comunidades locais, visitantes e a conservação do Parque Nacional do Iguaçu.",
-    icon: Users,
-    color: "var(--foreground)",
-  },
-  {
-    title: "Análises Integrativas",
-    description:
-      "Modelagem e síntese de dados de longo prazo para orientar o manejo e a conservação.",
-    icon: BarChart3,
-    color: "var(--muted-foreground)",
-  },
-];
+interface HomePageData {
+  slogan?: string;
+  imagem_fundo?: StrapiMedia | null;
+}
 
-const DESTAQUES = [
-  {
-    title: "Novo levantamento revela aumento na diversidade de aves no Parque",
-    excerpt:
-      "Dados coletados ao longo de três anos mostram a recuperação de espécies sensíveis em áreas de restauração florestal.",
-    date: "2026-08-10",
-    image: "/images/destaque-1.jpg",
-    href: "/noticias",
-  },
-  {
-    title: "PELD Iguaçu participa de encontro nacional de pesquisa ecológica",
-    excerpt:
-      "Equipe apresentou resultados preliminares do eixo Socioecológico em Brasília.",
-    date: "2026-07-22",
-    image: "/images/destaque-2.jpg",
-    href: "/noticias",
-  },
-  {
-    title: "Publicação avalia a qualidade da água em afluentes do Iguaçu",
-    excerpt:
-      "Novo artigo do eixo Saúde Ambiental está disponível na seção de publicações.",
-    date: "2026-07-05",
-    image: "/images/destaque-3.jpg",
-    href: "/publicacoes",
-  },
-];
+interface Eixo {
+  id: number;
+  nome: string;
+  descricao_curta: string;
+  icone?: StrapiMedia | null;
+  cor?: string;
+}
 
-export default function HomePage() {
-  const [destaque, ...outros] = DESTAQUES;
+interface Noticia {
+  id: number;
+  titulo: string;
+  resumo?: string;
+  imagem?: StrapiMedia | null;
+  data: string;
+}
+
+const SLOGAN_PADRAO = "Ciência, conservação e educação no Parque Nacional do Iguaçu.";
+
+// Ícone padrão por posição do eixo, usado enquanto o eixo não tem ícone próprio.
+const ICONES_EIXO: LucideIcon[] = [Leaf, HeartPulse, Users, MessagesSquare];
+const CORES_EIXO = ["var(--foreground)", "var(--primary)", "var(--muted-foreground)", "var(--accent)"];
+
+async function getHomeData() {
+  const [home, eixos, destaques, instituicoes] = await Promise.all([
+    fetchStrapi<HomePageData>("/home-page", { populate: "imagem_fundo" }),
+    fetchStrapi<Eixo[]>("/eixos", { populate: "icone", sort: "ordem:asc" }),
+    fetchStrapi<Noticia[]>("/noticias", {
+      "filters[destaque][$eq]": "true",
+      populate: "imagem",
+      sort: "data:desc",
+      "pagination[limit]": "3",
+    }),
+    getInstituicoes(),
+  ]);
+  return { home, eixos: eixos ?? [], destaques: destaques ?? [], instituicoes };
+}
+
+export default async function HomePage() {
+  const { home, eixos, destaques, instituicoes } = await getHomeData();
+  const heroUrl = strapiMediaUrl(home?.imagem_fundo) ?? "/images/hero-cataratas.jpg";
+  const [destaque, ...outros] = destaques;
 
   return (
     <>
       {/* Hero */}
       <section className="relative flex min-h-128 items-center justify-center overflow-hidden px-4 text-center md:min-h-160">
         <Image
-          src="/images/hero-cataratas.jpg"
-          alt="Vista das Cataratas do Iguaçu"
+          src={heroUrl}
+          alt={home?.imagem_fundo?.alternativeText ?? "Vista das Cataratas do Iguaçu"}
           fill
           preload
           sizes="100vw"
@@ -89,12 +74,12 @@ export default function HomePage() {
         />
 
         <div className="relative z-10 flex max-w-3xl flex-col items-center gap-5 py-20 md:gap-6 md:py-28">
-          <Badge variant="secondary" className="whitespace-normal text-center">
+          <span className="text-xs font-bold uppercase tracking-wider text-background/90">
             Programa de Pesquisa Ecológica de Longa Duração
-          </Badge>
+          </span>
           <h1 className="text-5xl text-background md:text-7xl">PELD Iguaçu</h1>
           <p className="max-w-xl text-lg text-background/90 md:text-xl">
-            Ciência, conservação e educação no Parque Nacional do Iguaçu.
+            {home?.slogan || SLOGAN_PADRAO}
           </p>
           <div className="mt-2 flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:gap-4">
             <Button asChild variant="accent" size="lg">
@@ -114,112 +99,149 @@ export default function HomePage() {
       </section>
 
       {/* Eixos de Atuação */}
-      <section className="mx-auto max-w-7xl px-4 py-16 md:py-24">
-        <SectionTitle
-          title="Eixos de Atuação"
-          subtitle="O PELD Iguaçu organiza suas pesquisas em quatro frentes integradas para compreender a dinâmica do Parque Nacional do Iguaçu."
-          centered
-        />
-        <div className="grid grid-cols-1 gap-x-6 gap-y-14 pt-4 sm:grid-cols-2 lg:grid-cols-4">
-          {EIXOS.map((eixo) => (
-            <AxisCard key={eixo.title} {...eixo} />
-          ))}
-        </div>
-      </section>
-
-      {/* Destaques Recentes */}
-      <section className="bg-muted px-4 py-16 md:py-24">
-        <div className="mx-auto max-w-7xl">
+      {eixos.length > 0 && (
+        <section className="mx-auto max-w-7xl px-4 py-16 md:py-24">
           <SectionTitle
-            title="Destaques Recentes"
-            subtitle="Últimas notícias e publicações do PELD Iguaçu."
-            className="[&_p]:mx-0"
+            title="Eixos de Atuação"
+            subtitle="O PELD Iguaçu organiza suas pesquisas em quatro frentes integradas para compreender a dinâmica do Parque Nacional do Iguaçu."
+            centered
           />
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8">
-            <Link href={destaque.href} className="group block rounded-xl">
-              <Card className="h-full gap-0 overflow-hidden">
-                <div className="relative aspect-video overflow-hidden">
-                  <Image
-                    src={destaque.image}
-                    alt=""
-                    fill
-                    sizes="(min-width: 1024px) 50vw, 100vw"
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
-                </div>
-                <CardContent className="p-6">
-                  <time
-                    dateTime={destaque.date}
-                    className="mb-2 block text-xs font-semibold uppercase tracking-wide text-primary"
-                  >
-                    {formatDate(destaque.date)}
-                  </time>
-                  <h3 className="mb-2 text-foreground transition-colors group-hover:text-primary md:text-2xl">
-                    {destaque.title}
-                  </h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground md:text-base">
-                    {destaque.excerpt}
-                  </p>
-                </CardContent>
-              </Card>
-            </Link>
+          <div className="grid grid-cols-1 gap-x-6 gap-y-14 pt-4 sm:grid-cols-2 lg:grid-cols-4">
+            {eixos.map((eixo, i) => (
+              <Link key={eixo.id} href="/pesquisa" className="block">
+                <AxisCard
+                  title={eixo.nome}
+                  description={eixo.descricao_curta}
+                  icon={ICONES_EIXO[i % ICONES_EIXO.length]}
+                  iconUrl={strapiMediaUrl(eixo.icone)}
+                  color={eixo.cor || CORES_EIXO[i % CORES_EIXO.length]}
+                />
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
-            <div className="flex flex-col gap-6">
-              {outros.map((post) => (
-                <Link key={post.title} href={post.href} className="group block flex-1 rounded-xl">
-                  <Card className="h-full flex-row gap-0 overflow-hidden">
-                    <div className="relative w-28 shrink-0 overflow-hidden sm:w-44">
+      {/* Destaques — notícias marcadas como destaque */}
+      {destaque && (
+        <section className="bg-muted px-4 py-16 md:py-24">
+          <div className="mx-auto max-w-7xl">
+            <SectionTitle
+              title="Destaques"
+              subtitle="Últimas notícias do PELD Iguaçu."
+              className="[&_p]:mx-0"
+            />
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8">
+              <Link href="/noticias" className="group block rounded-xl">
+                <Card className="h-full gap-0 overflow-hidden">
+                  {strapiMediaUrl(destaque.imagem) && (
+                    <div className="relative aspect-video overflow-hidden">
                       <Image
-                        src={post.image}
+                        src={strapiMediaUrl(destaque.imagem)!}
                         alt=""
                         fill
-                        sizes="(min-width: 640px) 176px, 112px"
+                        sizes="(min-width: 1024px) 50vw, 100vw"
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
                       />
                     </div>
-                    <CardContent className="flex flex-1 flex-col justify-center p-4 sm:p-6">
-                      <time
-                        dateTime={post.date}
-                        className="mb-1 block text-xs font-semibold uppercase tracking-wide text-primary"
-                      >
-                        {formatDate(post.date)}
-                      </time>
-                      <h4 className="mb-1 text-base text-foreground transition-colors group-hover:text-primary sm:text-lg">
-                        {post.title}
-                      </h4>
-                      <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">
-                        {post.excerpt}
+                  )}
+                  <CardContent className="p-6">
+                    <time
+                      dateTime={destaque.data}
+                      className="mb-2 block text-xs font-semibold uppercase tracking-wide text-primary"
+                    >
+                      {formatDate(destaque.data)}
+                    </time>
+                    <h3 className="mb-2 text-foreground transition-colors group-hover:text-primary md:text-2xl">
+                      {destaque.titulo}
+                    </h3>
+                    {destaque.resumo && (
+                      <p className="text-sm leading-relaxed text-muted-foreground md:text-base">
+                        {destaque.resumo}
                       </p>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
+                    )}
+                  </CardContent>
+                </Card>
+              </Link>
+
+              {outros.length > 0 && (
+                <div className="flex flex-col gap-6">
+                  {outros.map((post) => {
+                    const img = strapiMediaUrl(post.imagem);
+                    return (
+                      <Link key={post.id} href="/noticias" className="group block flex-1 rounded-xl">
+                        <Card className="h-full flex-row gap-0 overflow-hidden">
+                          {img && (
+                            <div className="relative w-28 shrink-0 overflow-hidden sm:w-44">
+                              <Image
+                                src={img}
+                                alt=""
+                                fill
+                                sizes="(min-width: 640px) 176px, 112px"
+                                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                              />
+                            </div>
+                          )}
+                          <CardContent className="flex flex-1 flex-col justify-center p-4 sm:p-6">
+                            <time
+                              dateTime={post.data}
+                              className="mb-1 block text-xs font-semibold uppercase tracking-wide text-primary"
+                            >
+                              {formatDate(post.data)}
+                            </time>
+                            <h4 className="mb-1 text-base text-foreground transition-colors group-hover:text-primary sm:text-lg">
+                              {post.titulo}
+                            </h4>
+                            {post.resumo && (
+                              <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">
+                                {post.resumo}
+                              </p>
+                            )}
+                          </CardContent>
+                        </Card>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* Parceiros */}
-      <section aria-labelledby="parceiros-titulo" className="border-t border-border px-4 py-12 md:py-16">
-        <div className="mx-auto max-w-7xl">
-          <h2
-            id="parceiros-titulo"
-            className="mb-8 text-center text-xs font-bold uppercase tracking-widest text-muted-foreground"
-          >
-            Parceiros e Apoio Institucional
-          </h2>
-          <ul className="flex flex-wrap items-center justify-center gap-x-10 gap-y-6 md:gap-x-16">
-            {PARCEIROS.map((nome) => (
-              <li
-                key={nome}
-                className="text-xl font-bold tracking-wide text-muted-foreground opacity-70 grayscale transition-opacity hover:opacity-100 md:text-2xl"
-              >
-                {nome}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
+      {/* Apoio */}
+      {instituicoes.length > 0 && (
+        <section aria-labelledby="parceiros-titulo" className="border-t border-border px-4 py-12 md:py-16">
+          <div className="mx-auto max-w-7xl">
+            <h2
+              id="parceiros-titulo"
+              className="mb-8 text-center text-xs font-bold uppercase tracking-widest text-muted-foreground"
+            >
+              Apoio
+            </h2>
+            <ul className="flex flex-wrap items-center justify-center gap-x-10 gap-y-6 md:gap-x-16">
+              {instituicoes.map((inst) => {
+                const logoUrl = strapiMediaUrl(inst.logo);
+                return (
+                  <li
+                    key={inst.id}
+                    className="opacity-70 grayscale transition hover:opacity-100 hover:grayscale-0"
+                  >
+                    {logoUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={logoUrl} alt={inst.nome} className="h-12 w-auto object-contain md:h-14" />
+                    ) : (
+                      <span className="text-xl font-bold tracking-wide text-muted-foreground md:text-2xl">
+                        {inst.nome}
+                      </span>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </section>
+      )}
     </>
   );
 }

@@ -28,7 +28,7 @@ export default async function PublicacoesPage() {
       <section className="max-w-7xl mx-auto px-4">
         {publicacoes.length === 0 ? (
           <p className="text-center text-muted-foreground text-sm">
-            Cadastre publicações no Strapi (Content Manager → Publicação) para exibi-las aqui.
+            Nenhuma publicação disponível no momento.
           </p>
         ) : (
           <div className="space-y-4">

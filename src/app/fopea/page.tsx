@@ -23,8 +23,8 @@ export default async function FopeaPage() {
   return (
     <div className="pb-20">
       <PageHeader
-        title="FOPEA"
-        description="Formação de Professores em Educação Ambiental — Parque Nacional do Iguaçu."
+        title="FOPEA – Parque Nacional do Iguaçu"
+        description="Formação de Professores em Educação Ambiental."
       />
 
       <section className="max-w-7xl mx-auto px-4">
@@ -33,7 +33,7 @@ export default async function FopeaPage() {
             paragrafos.map((p, i) => <p key={i}>{p}</p>)
           ) : (
             <p className="text-sm">
-              Conteúdo em cadastro no Strapi (Content Manager → FOPEA Page).
+              Em breve.
             </p>
           )}
         </div>

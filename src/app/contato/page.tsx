@@ -1,19 +1,15 @@
 import { fetchStrapi } from "@/lib/strapi";
+import { getConfiguracaoGlobal } from "@/lib/partners";
 import { PageHeader } from "@/components/PageHeader";
 
 interface ContatoPageData {
   introducao?: string;
 }
 
-interface ConfiguracaoGlobal {
-  footer_localidade?: string;
-  footer_email?: string;
-}
-
 async function getContatoData() {
   const [contato, config] = await Promise.all([
     fetchStrapi<ContatoPageData>("/contato-page"),
-    fetchStrapi<ConfiguracaoGlobal>("/configuracao-global"),
+    getConfiguracaoGlobal(),
   ]);
   return { contato, config };
 }
@@ -79,7 +75,7 @@ export default async function ContatoPage() {
               {config?.footer_localidade && <p>{config.footer_localidade}</p>}
               {config?.footer_email && <p>{config.footer_email}</p>}
               {!config?.footer_localidade && !config?.footer_email && (
-                <p>Cadastre a localidade e o e-mail em Configuração Global no Strapi.</p>
+                <p>Use o formulário ao lado para falar com a equipe.</p>
               )}
             </div>
           </div>

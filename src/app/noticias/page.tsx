@@ -40,7 +40,7 @@ export default async function NoticiasPage() {
           <div className="lg:col-span-2">
             {noticias.length === 0 ? (
               <p className="text-muted-foreground text-sm">
-                Cadastre notícias no Strapi (Content Manager → Notícia) para exibi-las aqui.
+                Nenhuma notícia publicada no momento.
               </p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
@@ -78,7 +78,7 @@ export default async function NoticiasPage() {
             <h3 className="text-xl font-bold text-foreground mb-6">Agenda de Eventos</h3>
             {eventos.length === 0 ? (
               <p className="text-muted-foreground text-sm">
-                Cadastre eventos no Strapi (Content Manager → Evento) para exibi-los aqui.
+                Nenhum evento agendado no momento.
               </p>
             ) : (
               <div className="space-y-4">

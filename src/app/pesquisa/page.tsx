@@ -48,7 +48,7 @@ export default async function PesquisaPage() {
       <section className="max-w-7xl mx-auto px-4 space-y-8">
         {eixos.length === 0 && (
           <p className="text-center text-muted-foreground text-sm">
-            Cadastre os eixos no Strapi (Content Manager → Eixo) para exibi-los aqui.
+            Em breve.
           </p>
         )}
         {eixos.map((eixo) => {
