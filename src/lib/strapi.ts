@@ -22,7 +22,9 @@ export function strapiMediaUrl(media?: StrapiMedia | null): string | undefined {
 /**
  * Fetch tipado para a REST API do Strapi.
  * `path` já inclui a barra inicial, ex: "/noticias".
- * Revalida a cada 60s (ISR) por padrão.
+ * Sem cache: cada request busca no Strapi e as rotas que usam este fetch
+ * passam a ser renderizadas sob demanda. Para voltar ao ISR, trocar
+ * `cache: "no-store"` por `next: { revalidate: <segundos> }`.
  */
 export async function fetchStrapi<T>(
   path: string,
@@ -32,7 +34,7 @@ export async function fetchStrapi<T>(
 
   try {
     const res = await fetch(`${STRAPI_URL}/api${path}${query}`, {
-      next: { revalidate: 60 },
+      cache: "no-store",
     });
 
     if (!res.ok) {
