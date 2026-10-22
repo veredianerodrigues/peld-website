@@ -62,7 +62,7 @@ function MembroCard({ membro }: { membro: Membro }) {
   const fotoUrl = strapiMediaUrl(membro.foto);
   return (
     <div className="flex items-center gap-4 p-6 bg-card rounded-lg shadow-sm border border-border">
-      <div className="w-16 h-16 rounded-full overflow-hidden shrink-0 bg-soft-teal flex items-center justify-center">
+      <div className="w-16 h-16 rounded-full overflow-hidden shrink-0 bg-secondary flex items-center justify-center">
         {fotoUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={fotoUrl} alt={membro.nome} className="w-full h-full object-cover" />
@@ -116,7 +116,7 @@ export default async function SobrePage() {
             ]
               .filter((s) => s.value)
               .map((s) => (
-                <div key={s.label} className="text-center p-6 bg-soft-teal rounded-lg">
+                <div key={s.label} className="text-center p-6 bg-secondary rounded-lg">
                   <div className="text-3xl font-bold text-primary">{s.value}</div>
                   <div className="text-sm text-muted-foreground">{s.label}</div>
                 </div>
@@ -137,7 +137,7 @@ export default async function SobrePage() {
                     key={el.id}
                     className="text-center p-8 border border-border rounded-lg"
                   >
-                    <div className="mx-auto w-16 h-16 bg-soft-teal text-primary rounded-full flex items-center justify-center mb-6">
+                    <div className="mx-auto w-16 h-16 bg-secondary text-primary rounded-full flex items-center justify-center mb-6">
                       {iconUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={iconUrl} alt="" className="w-8 h-8 object-contain" />

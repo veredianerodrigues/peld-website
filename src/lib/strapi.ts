@@ -1,4 +1,6 @@
-const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL ?? "http://localhost:1337";
+import { unstable_rethrow } from "next/navigation";
+
+const STRAPI_URL =process.env.NEXT_PUBLIC_STRAPI_URL ?? "http://localhost:1337";
 
 export interface StrapiMedia {
   id: number;
@@ -49,6 +51,9 @@ export async function fetchStrapi<T>(
     const json: StrapiResponse<T> = await res.json();
     return json.data;
   } catch (err) {
+    // Repassa os erros internos do Next (ex.: DynamicServerError do fetch no-store
+    // durante o prerender); só erros reais de rede caem no fallback null.
+    unstable_rethrow(err);
     console.error(`Strapi fetch error: ${path}`, err);
     return null;
   }

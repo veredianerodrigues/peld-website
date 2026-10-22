@@ -23,17 +23,13 @@ export default async function InstituicoesPage() {
               const logoUrl = strapiMediaUrl(inst.logo);
               const content = (
                 <div className="flex flex-col items-center text-center p-8 bg-card rounded-lg border border-border h-full">
-                  {logoUrl ? (
+                  {logoUrl && (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={logoUrl}
                       alt={inst.nome}
                       className="h-16 w-auto object-contain mb-4"
                     />
-                  ) : (
-                    <div className="h-16 flex items-center justify-center font-bold text-foreground mb-4">
-                      {inst.nome}
-                    </div>
                   )}
                   <h3 className="font-bold text-foreground mb-1">{inst.nome}</h3>
                   {inst.descricao && (
