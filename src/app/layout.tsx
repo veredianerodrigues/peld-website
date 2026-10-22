@@ -4,6 +4,14 @@ import { Source_Sans_3 } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { MATERIAL_ICON_NAMES } from "@/components/icons";
+
+// Subset da fonte Material Symbols: só os ícones usados (icon_names precisa estar em ordem alfabética).
+const MATERIAL_SYMBOLS_URL = `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=${[
+  ...MATERIAL_ICON_NAMES,
+]
+  .sort()
+  .join(",")}&display=block`;
 
 const sourceSans = Source_Sans_3({
   variable: "--font-source-sans",
@@ -22,6 +30,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-BR" className={sourceSans.variable}>
+      <head>
+        <link rel="stylesheet" href={MATERIAL_SYMBOLS_URL} />
+      </head>
       <body className="flex min-h-screen flex-col">
         <a
           href="#conteudo"

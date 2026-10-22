@@ -4,6 +4,7 @@ import logo from "../../public/peld-logo.png";
 import { NAV_ITEMS } from "@/lib/nav";
 import { getConfiguracaoGlobal, getInstituicoes, TEXTO_FOOTER_PADRAO } from "@/lib/partners";
 import { strapiMediaUrl } from "@/lib/strapi";
+import { NOME_REDE, SocialIcon } from "@/components/icons";
 
 export async function SiteFooter() {
   const year = new Date().getFullYear();
@@ -38,7 +39,7 @@ export async function SiteFooter() {
           </ul>
         </div>
 
-        {(config?.footer_localidade || config?.footer_email) && (
+        {(config?.footer_localidade || config?.footer_email || config?.redes_sociais?.length) && (
           <div>
             <h4 className="text-background mb-4">Contato</h4>
             <ul className="flex flex-col gap-2 text-sm text-background/70">
@@ -51,6 +52,23 @@ export async function SiteFooter() {
                 </li>
               )}
             </ul>
+            {!!config.redes_sociais?.length && (
+              <ul className="flex flex-wrap gap-3 mt-4">
+                {config.redes_sociais.map((r) => (
+                  <li key={r.id}>
+                    <a
+                      href={r.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={r.usuario ? `${NOME_REDE[r.rede]}: ${r.usuario}` : NOME_REDE[r.rede]}
+                      className="flex size-9 items-center justify-center rounded-full bg-background/10 text-background/80 hover:bg-background/20 hover:text-background"
+                    >
+                      <SocialIcon rede={r.rede} className="size-4" />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         )}
 

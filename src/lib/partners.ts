@@ -1,4 +1,5 @@
 import { fetchStrapi, type StrapiMedia } from "@/lib/strapi";
+import type { RedeSocial } from "@/components/icons";
 
 export interface Instituicao {
   id: number;
@@ -17,14 +18,22 @@ export async function getInstituicoes() {
   return data ?? [];
 }
 
+export interface RedeSocialLink {
+  id: number;
+  rede: RedeSocial;
+  url: string;
+  usuario?: string | null;
+}
+
 export interface ConfiguracaoGlobal {
   texto_footer?: string;
   footer_localidade?: string;
   footer_email?: string;
+  redes_sociais?: RedeSocialLink[];
 }
 
 export function getConfiguracaoGlobal() {
-  return fetchStrapi<ConfiguracaoGlobal>("/configuracao-global");
+  return fetchStrapi<ConfiguracaoGlobal>("/configuracao-global", { populate: "redes_sociais" });
 }
 
 export const TEXTO_FOOTER_PADRAO =
