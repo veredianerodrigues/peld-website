@@ -9,7 +9,7 @@ export interface Instituicao {
   descricao?: string;
 }
 
-/** Instituições cadastradas — fonte única para rodapé, Home e página de Instituições. */
+/** Instituições cadastradas — fonte única para rodapé e página de Instituições. */
 export async function getInstituicoes() {
   const data = await fetchStrapi<Instituicao[]>("/instituicoes", {
     populate: "logo",

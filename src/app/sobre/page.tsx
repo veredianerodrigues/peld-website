@@ -59,7 +59,7 @@ function TextBlock({ title, text }: { title: string; text?: string }) {
   return (
     <div className="mb-16">
       <h2 className="text-2xl font-bold text-foreground mb-4">{title}</h2>
-      <RichText className="text-muted-foreground leading-relaxed max-w-3xl">
+      <RichText className="text-muted-foreground leading-relaxed">
         {text}
       </RichText>
     </div>
@@ -168,7 +168,7 @@ export default async function SobrePage() {
                       }
                     >
                       <div
-                        className={img ? "lg:col-span-2 min-w-0" : "max-w-3xl"}
+                        className={img ? "lg:col-span-2 min-w-0" : undefined}
                       >
                         <h3 className="text-lg font-bold text-foreground mb-3">
                           {secao.titulo}

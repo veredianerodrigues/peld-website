@@ -124,7 +124,7 @@ export default async function PublicacoesPage() {
     <div className="pb-20">
       <PageHeader title="Publicações" description="Publicações científicas do PELD Iguaçu." />
 
-      <div className="max-w-4xl mx-auto px-4 space-y-16">
+      <div className="max-w-7xl mx-auto px-4 space-y-16">
         {pagina?.introducao && (
           <section>
             <RichText className="text-muted-foreground leading-relaxed">{pagina.introducao}</RichText>

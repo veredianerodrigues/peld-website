@@ -28,7 +28,7 @@ export default async function FopeaPage() {
       />
 
       <section className="max-w-7xl mx-auto px-4">
-        <div className="space-y-4 text-muted-foreground leading-relaxed max-w-3xl mb-12">
+        <div className="space-y-4 text-muted-foreground leading-relaxed mb-12">
           {paragrafos.length > 0 ? (
             paragrafos.map((p, i) => <p key={i}>{p}</p>)
           ) : (

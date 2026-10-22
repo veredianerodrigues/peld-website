@@ -54,7 +54,7 @@ export default async function PesquisaPage() {
 
       {pesquisa?.introducao && (
         <section className="max-w-7xl mx-auto px-4 mb-12">
-          <RichText className="text-muted-foreground leading-relaxed max-w-3xl">
+          <RichText className="text-muted-foreground leading-relaxed">
             {pesquisa.introducao}
           </RichText>
         </section>
@@ -154,7 +154,10 @@ export default async function PesquisaPage() {
             {infraestrutura.map((secao) => {
               const img = strapiMediaUrl(secao.imagem);
               return (
-                <div key={secao.id} className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                <div
+                  key={secao.id}
+                  className={img ? "grid grid-cols-1 lg:grid-cols-2 gap-8 items-start" : undefined}
+                >
                   <div className="min-w-0">
                     <h3 className="text-xl font-bold text-foreground mb-4">{secao.titulo}</h3>
                     <RichText className="text-muted-foreground leading-relaxed">{secao.texto}</RichText>

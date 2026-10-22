@@ -27,7 +27,7 @@ export default async function ContatoPage() {
         description={contato?.introducao ?? "Fale com a equipe do PELD Iguaçu."}
       />
 
-      <section className="max-w-4xl mx-auto px-4">
+      <section className="max-w-7xl mx-auto px-4">
         {!temContato && <p className="text-muted-foreground text-sm">Em breve.</p>}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

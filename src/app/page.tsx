@@ -6,7 +6,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { SectionTitle } from "@/components/patterns/section-title";
 import { AxisCard } from "@/components/patterns/axis-card";
 import { formatDate } from "@/lib/format";
-import { getInstituicoes } from "@/lib/partners";
 import { fetchStrapi, strapiMediaUrl, type StrapiMedia } from "@/lib/strapi";
 
 interface HomePageData {
@@ -31,6 +30,18 @@ interface Noticia {
   data: string;
 }
 
+interface ItemApoio {
+  id: number;
+  nome: string;
+  logo?: StrapiMedia | null;
+  link?: string | null;
+}
+
+interface SecaoApoio {
+  titulo: string;
+  itens?: ItemApoio[];
+}
+
 const SLOGAN_PADRAO = "Ciência, conservação e educação no Parque Nacional do Iguaçu.";
 
 // Ícone padrão por posição do eixo, usado enquanto o eixo não tem ícone próprio.
@@ -38,7 +49,7 @@ const ICONES_EIXO: LucideIcon[] = [Leaf, HeartPulse, Users, MessagesSquare];
 const CORES_EIXO = ["var(--foreground)", "var(--primary)", "var(--muted-foreground)", "var(--accent)"];
 
 async function getHomeData() {
-  const [home, eixos, destaques, instituicoes] = await Promise.all([
+  const [home, eixos, destaques, apoio] = await Promise.all([
     fetchStrapi<HomePageData>("/home-page", { populate: "imagem_fundo" }),
     fetchStrapi<Eixo[]>("/eixos", { populate: "icone", sort: "ordem:asc" }),
     fetchStrapi<Noticia[]>("/noticias", {
@@ -47,13 +58,14 @@ async function getHomeData() {
       sort: "data:desc",
       "pagination[limit]": "3",
     }),
-    getInstituicoes(),
+    fetchStrapi<SecaoApoio>("/secao-apoio", { "populate[itens][populate]": "logo" }),
   ]);
-  return { home, eixos: eixos ?? [], destaques: destaques ?? [], instituicoes };
+  return { home, eixos: eixos ?? [], destaques: destaques ?? [], apoio };
 }
 
 export default async function HomePage() {
-  const { home, eixos, destaques, instituicoes } = await getHomeData();
+  const { home, eixos, destaques, apoio } = await getHomeData();
+  const itensApoio = apoio?.itens ?? [];
   const heroUrl = strapiMediaUrl(home?.imagem_fundo) ?? "/images/hero-cataratas.jpg";
   const [destaque, ...outros] = destaques;
 
@@ -211,30 +223,37 @@ export default async function HomePage() {
       )}
 
       {/* Apoio */}
-      {instituicoes.length > 0 && (
+      {itensApoio.length > 0 && (
         <section aria-labelledby="parceiros-titulo" className="border-t border-border px-4 py-12 md:py-16">
           <div className="mx-auto max-w-7xl">
             <h2
               id="parceiros-titulo"
               className="mb-8 text-center text-xs font-bold uppercase tracking-widest text-muted-foreground"
             >
-              Apoio
+              {apoio?.titulo}
             </h2>
             <ul className="flex flex-wrap items-center justify-center gap-x-10 gap-y-6 md:gap-x-16">
-              {instituicoes.map((inst) => {
-                const logoUrl = strapiMediaUrl(inst.logo);
+              {itensApoio.map((item) => {
+                const logoUrl = strapiMediaUrl(item.logo);
+                const conteudo = logoUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={logoUrl} alt={item.nome} className="h-12 w-auto object-contain md:h-14" />
+                ) : (
+                  <span className="text-xl font-bold tracking-wide text-muted-foreground md:text-2xl">
+                    {item.nome}
+                  </span>
+                );
                 return (
                   <li
-                    key={inst.id}
+                    key={item.id}
                     className="opacity-70 grayscale transition hover:opacity-100 hover:grayscale-0"
                   >
-                    {logoUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={logoUrl} alt={inst.nome} className="h-12 w-auto object-contain md:h-14" />
+                    {item.link ? (
+                      <a href={item.link} target="_blank" rel="noopener noreferrer">
+                        {conteudo}
+                      </a>
                     ) : (
-                      <span className="text-xl font-bold tracking-wide text-muted-foreground md:text-2xl">
-                        {inst.nome}
-                      </span>
+                      conteudo
                     )}
                   </li>
                 );
