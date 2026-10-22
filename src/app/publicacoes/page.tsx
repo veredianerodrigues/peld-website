@@ -1,6 +1,6 @@
 import { Fragment, type ReactNode } from "react";
 import { fetchStrapi, strapiMediaUrl, type StrapiMedia } from "@/lib/strapi";
-import { splitParagraphs } from "@/lib/format";
+import { RichText } from "@/components/RichText";
 import { PageHeader } from "@/components/PageHeader";
 
 interface PublicacoesPageData {
@@ -112,7 +112,6 @@ function ListaComDossies({ itens }: { itens: Publicacao[] }) {
 
 export default async function PublicacoesPage() {
   const { pagina, publicacoes } = await getPublicacoesData();
-  const intro = splitParagraphs(pagina?.introducao);
 
   const ebookCapa = strapiMediaUrl(pagina?.ebook_capa);
   const ebookHref = pagina?.ebook_link || strapiMediaUrl(pagina?.ebook_arquivo);
@@ -126,11 +125,9 @@ export default async function PublicacoesPage() {
       <PageHeader title="Publicações" description="Publicações científicas do PELD Iguaçu." />
 
       <div className="max-w-4xl mx-auto px-4 space-y-16">
-        {intro.length > 0 && (
-          <section className="space-y-4 text-muted-foreground leading-relaxed">
-            {intro.map((p, i) => (
-              <p key={i}>{p}</p>
-            ))}
+        {pagina?.introducao && (
+          <section>
+            <RichText className="text-muted-foreground leading-relaxed">{pagina.introducao}</RichText>
           </section>
         )}
 

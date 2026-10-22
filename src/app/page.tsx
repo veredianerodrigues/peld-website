@@ -25,6 +25,7 @@ interface Eixo {
 interface Noticia {
   id: number;
   titulo: string;
+  slug?: string | null;
   resumo?: string;
   imagem?: StrapiMedia | null;
   data: string;
@@ -132,7 +133,7 @@ export default async function HomePage() {
               className="[&_p]:mx-0"
             />
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8">
-              <Link href="/noticias" className="group block rounded-xl">
+              <Link href={destaque.slug ? `/noticias/${destaque.slug}` : "/noticias"} className="group block rounded-xl">
                 <Card className="h-full gap-0 overflow-hidden">
                   {strapiMediaUrl(destaque.imagem) && (
                     <div className="relative aspect-video overflow-hidden">
@@ -169,7 +170,7 @@ export default async function HomePage() {
                   {outros.map((post) => {
                     const img = strapiMediaUrl(post.imagem);
                     return (
-                      <Link key={post.id} href="/noticias" className="group block flex-1 rounded-xl">
+                      <Link key={post.id} href={post.slug ? `/noticias/${post.slug}` : "/noticias"} className="group block flex-1 rounded-xl">
                         <Card className="h-full flex-row gap-0 overflow-hidden">
                           {img && (
                             <div className="relative w-28 shrink-0 overflow-hidden sm:w-44">

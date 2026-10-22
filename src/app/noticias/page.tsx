@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { fetchStrapi, strapiMediaUrl, type StrapiMedia } from "@/lib/strapi";
 import { formatDate, formatDateRange, todayISO } from "@/lib/format";
 import { PageHeader } from "@/components/PageHeader";
@@ -5,6 +6,7 @@ import { PageHeader } from "@/components/PageHeader";
 interface Noticia {
   id: number;
   titulo: string;
+  slug?: string | null;
   resumo?: string;
   imagem?: StrapiMedia | null;
   data: string;
@@ -106,7 +108,11 @@ export default async function NoticiasPage() {
                 {noticias.map((n) => {
                   const img = strapiMediaUrl(n.imagem);
                   return (
-                    <div key={n.id}>
+                    <Link
+                      key={n.id}
+                      href={n.slug ? `/noticias/${n.slug}` : "/noticias"}
+                      className="group block"
+                    >
                       {img && (
                         <div className="aspect-video rounded-lg overflow-hidden mb-4">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -120,13 +126,13 @@ export default async function NoticiasPage() {
                       <div className="text-xs text-primary font-bold mb-2 uppercase">
                         {formatDate(n.data)}
                       </div>
-                      <h3 className="text-lg font-bold text-foreground mb-2 leading-tight">
+                      <h3 className="text-lg font-bold text-foreground mb-2 leading-tight group-hover:text-primary transition-colors">
                         {n.titulo}
                       </h3>
                       {n.resumo && (
                         <p className="text-sm text-muted-foreground line-clamp-2">{n.resumo}</p>
                       )}
-                    </div>
+                    </Link>
                   );
                 })}
               </div>
